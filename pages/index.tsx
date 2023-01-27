@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 
 export default function HomePage() {
   return (
-    <div className="w-fit h-fit m-auto">
+    <main className="w-fit h-fit m-auto">
       <h2 className="mx-auto w-fit h-fit">Trends</h2>
       <ul className="grid grid-cols-10 max-w-[400px]">
         {Object.values(Regions).map((region) => (
@@ -17,6 +17,6 @@ export default function HomePage() {
           </li>
         ))}
       </ul>
-    </div>
+    </main>
   );
 }

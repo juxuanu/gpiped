@@ -8,14 +8,14 @@ import { Regions, StreamItem } from "../../models";
 import { PipedService } from "../../server";
 import React from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 interface Props {
   trendingVideos: StreamItem[];
 }
 
-export function Home(props: Props) {
+export function TrendingInRegionPage(props: Props) {
   const router = useRouter();
-
   return (
     <>
       <Head>
@@ -36,18 +36,30 @@ export function Home(props: Props) {
               hover:bg-neutral-200 transition-colors duration-300 shadow-md shadow-neutral-200"
               onClick={() => router.push(`/${video.url}`)}
             >
-              <img
-                loading="lazy"
-                tabIndex={index}
-                src={video.thumbnail}
-                className="w-full h-auto"
-                alt={`${video.title} thumbnail`}
-              />
-              <h2 className="text-base p-2">
-                {video.title.length > 49
-                  ? video.title.slice(0, 50) + "..."
-                  : video.title}
-              </h2>
+              <Link href={`${video.url}`}>
+                <img
+                  loading="lazy"
+                  tabIndex={index}
+                  src={video.thumbnail}
+                  className="w-full h-auto"
+                  alt={`${video.title} thumbnail`}
+                />
+                <h2 className="text-base p-2 max-h-8 overflow-y-hidden">
+                  {video.title.length > 49
+                    ? video.title.slice(0, 50) + "..."
+                    : video.title}
+                </h2>
+                <div className="text-sm text-light opacity-70 p-2 mt-auto hover:underline">
+                  <div
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.location.href = video.uploaderUrl ?? "#";
+                    }}
+                  >
+                    {video.uploaderName}
+                  </div>
+                </div>
+              </Link>
             </div>
           ))}
         </div>
@@ -56,7 +68,7 @@ export function Home(props: Props) {
   );
 }
 
-export default Home;
+export default TrendingInRegionPage;
 
 export async function getStaticProps(
   context: GetStaticPropsContext
@@ -64,15 +76,13 @@ export async function getStaticProps(
   console.debug(context.params);
   return {
     props: {
-      trendingVideos: (
-        await PipedService.getTrendingVideos(
-          Regions[
-            (
-              context.params?.region as string
-            ).toUpperCase() as keyof typeof Regions
-          ]
-        )
-      ).data,
+      trendingVideos: await PipedService.getTrendingVideos(
+        Regions[
+          (
+            context.params?.region as string
+          ).toUpperCase() as keyof typeof Regions
+        ]
+      ),
     },
   };
 }
